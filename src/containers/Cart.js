@@ -21,7 +21,15 @@ renderList = items => {
         return (
             <ShoppingList
                 key={item.styleNumber}
-                image={item.src} />
+                image={item.src}
+                name={item.name} 
+                styleNumber={item.styleNumber} 
+                color={item.color}
+                alt={item.alt} 
+                size={item.size}
+                price={item.price}
+                render={item.render} 
+                />
         )
     })
 }
