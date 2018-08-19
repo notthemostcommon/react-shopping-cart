@@ -3,20 +3,23 @@ import { Grid, Image, Divider } from 'semantic-ui-react';
 
 
  const ShoppingList = props => {
+     console.log(props);
+     
   const upperName = `${props.name}`.toUpperCase(); 
   const shirtSize = props.size[Math.floor(Math.random() * props.size.length)]
   const price = props.price.toFixed(2); 
-  const style = {
-      textAlign: "right",}
-  console.log(price);
+  const totalItems = props.length; 
+  console.log(totalItems);
   
+  const style = { textAlign: "right" }
   
-//   
+
   
     return (
       <div>
+          
         <Grid divided='vertically'>
-        <Grid.Row columns={3}>
+        <Grid.Row >
         <Grid.Column width={3}>
             <Image 
                 src={props.image}
@@ -33,7 +36,7 @@ import { Grid, Image, Divider } from 'semantic-ui-react';
         </Grid.Column>
     <Grid.Column width={2}>
         <input 
-            maxlength="1" 
+            maxLength="1" 
             defaultValue="1"
             size="2"
             align="middle"
