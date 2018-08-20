@@ -14,7 +14,9 @@ export default class Cart extends Component {
       items: inventory,
       listLength: 0,
       chosenItems: [],
-      totalAmount: []
+      totalAmount: [], 
+      priceTotal: 0, 
+       
     };
 
     this.updateTotal = this.updateTotal.bind(this);
@@ -22,19 +24,37 @@ export default class Cart extends Component {
 
   componentDidMount = () => {
     let renderedList = [];
+    let priceTotal = []; 
+    console.log("priceTotal", priceTotal);
+    
     this.state.items.map(item => {
-      item.render && renderedList.push(item);
+      item.render && renderedList.push(item), 
+      item.render && priceTotal.push(item.price); 
     });
     this.setState({
       chosenItems: renderedList,
-      listLength: renderedList.length
+      listLength: renderedList.length, 
+      totalAmount: priceTotal, 
     });
-  };
-  updateTotal = () => {
-    let { totalAmount } = this.state;
-    this.state.chosenItems.map(item => {
-      return totalAmount.push(item.price);
-    });
+    this.updateTotal(priceTotal)
+  }
+                 
+  updateTotal = (price) => {
+    let totalAmount = []; 
+    console.log(this.state.chosenItems);
+    
+    // let { totalAmount } = this.state;
+    // this.setState({totalAmount: [...totalAmount,price ]})
+    // this.state.chosenItems.map(item => {
+    //   return totalAmount.push(item.price)
+      
+    // });
+    let totalPrice = price.reduce( (total, current) => {
+      return total + current
+    }, 0)
+    this.setState({priceTotal: totalPrice})
+    console.log("totalAmount, totalPrice", totalPrice);
+    
   };
 
   renderList = items => {
@@ -51,6 +71,8 @@ export default class Cart extends Component {
             size={item.size}
             price={item.price}
             render={item.render}
+            colorOptions={item.colorOptions}
+            updateTotal={this.updateTotal}
           />
         )
       );
@@ -58,8 +80,8 @@ export default class Cart extends Component {
   };
 
   render() {
-    this.updateTotal();
-    console.log("this state in render", this.state);
+    
+    // console.log("this state in render", this.state);
 
     return (
       <div>
@@ -98,7 +120,7 @@ export default class Cart extends Component {
               <QuestionsLink />
             </Grid.Column>
             <Grid.Column floated="right" width={12}>
-              <CheckoutTotal />
+              {this.state.priceTotal && <CheckoutTotal priceTotal={this.state.priceTotal}/>}
             </Grid.Column>
           </Grid>
         </Container>

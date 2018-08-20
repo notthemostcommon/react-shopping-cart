@@ -11,6 +11,9 @@ export default class CheckoutTotal extends Component {
     }
     
   render() {
+      console.log("checkout", this.props.priceTotal);
+      
+      let formattedPrice = this.props.priceTotal.toFixed(2)
     return (
       <div>
         <Grid divided="vertically">
@@ -25,6 +28,7 @@ export default class CheckoutTotal extends Component {
           <h4> SUB TOTAL</h4>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
+          <h3>${formattedPrice}</h3>
           </Grid.Column>
 
           <Grid.Column floated="left" width={8} >
