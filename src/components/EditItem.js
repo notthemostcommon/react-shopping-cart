@@ -1,14 +1,8 @@
 import React from "react";
-import {
-  Modal,
-  Button,
-  Image,
-  Grid,
-  Dropdown
-} from "semantic-ui-react";
+import { Modal, Button, Image, Grid, Dropdown, Form } from "semantic-ui-react";
 
 const EditItem = props => {
-  console.log(props);
+    console.log("editItem props", props);
   const sizingStyle = { display: "inline-block" };
   const inputStyle = { height: "40px", textAlign: "center" };
   const options = [
@@ -47,20 +41,22 @@ const EditItem = props => {
                 onChange={props.updateShirtSize}
                 value={props.shirtSize}
               />
-              <input
-                maxLength="1"
-                defaultValue={props.quantity}
-                size="2"
-                align="middle"
-                
-                style={inputStyle}
-                onBlur={props.updateQuantity}
-              />
+              <Form>
+                <input // quanity update input field
+                  maxLength="1"
+                  defaultValue={props.quantity}
+                  size="2"
+                  align="middle"
+                  style={inputStyle}
+                  onBlur={props.updateQuantity( props.item.styleNumber)}
+                />
+                <br />
+                <Button type="submit">EDIT</Button>
+              </Form>
             </div>
-            <br/>
-            <Button primary>EDIT</Button>
-            <p><a href="#">Check product details</a></p>
 
+            {/* <Button primary>EDIT</Button>
+            <p><a href="#">Check product details</a></p> */}
           </Grid.Column>
           <Grid.Column width={8}>
             <Image src={props.item.image} size="medium" />

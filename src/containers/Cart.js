@@ -17,13 +17,14 @@ export default class Cart extends Component {
       priceTotal: 0,
       promoCode: "",
       promoDiscount: 0.1,
-      promoPrice: 0, 
-      estimatedTotal: 0, 
+      promoPrice: 0,
+      estimatedTotal: 0
     };
 
     this.updateTotal = this.updateTotal.bind(this);
     this.getPromoCode = this.getPromoCode.bind(this);
-    this.promoDiscount = this.promoDiscount.bind(this); 
+    this.promoDiscount = this.promoDiscount.bind(this);
+    this.updateQuantity = this.updateQuantity.bind(this); 
   }
 
   componentDidMount = () => {
@@ -31,59 +32,67 @@ export default class Cart extends Component {
     let priceTotal = [];
 
     this.state.items.map(item => {
-      item.quantOrdered > 0 && renderedList.push(item); 
-      // item.render && renderedList.push(item),
-        item.quantOrdered > 0 && priceTotal.push({
-          price: item.price, 
-          quantity: item.quantOrdered,})
+      item.quantOrdered > 0 && renderedList.push(item);
+      item.quantOrdered > 0 &&
+        priceTotal.push({
+          price: item.price,
+          quantity: item.quantOrdered
+        });
     });
     this.setState({
       chosenItems: renderedList,
       listLength: renderedList.length,
-      totalAmount: priceTotal, 
+      totalAmount: priceTotal
     });
     this.updateTotal(priceTotal);
   };
 
   updateTotal = prices => {
     let totalAmount = [];
-prices.map (price => {
-  totalAmount.push(price.price * price.quantity);  
-})
-console.log("total amount", totalAmount);
-
-
-    
-    // let { totalAmount } = this.state;
-    // this.setState({totalAmount: [...totalAmount,price ]})
-    // this.state.chosenItems.map(item => {
-    //   return totalAmount.push(item.price)
-
-    // });
+    prices.map(price => {
+      totalAmount.push(price.price * price.quantity);
+    });
     let totalPrice = totalAmount.reduce((total, current) => {
       return total + current;
     }, 0);
-    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice });    
+    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice });
   };
-  
+
   calculateEstimatedTotal = () => {
     console.log("estimatedTotal", this.state);
-    
-    let total = (this.state.priceTotal - this.state.promoPrice);     
-    this.setState({estimatedTotal: total})
-  }
-  
-  getPromoCode = e => {    
+
+    let total = this.state.priceTotal - this.state.promoPrice;
+    this.setState({ estimatedTotal: total });
+  };
+
+  getPromoCode = e => {
     this.setState({ promoCode: e.target.value });
-    this.promoDiscount(); 
+    this.promoDiscount();
   };
 
   promoDiscount = () => {
-    let discountPrice = (this.state.priceTotal * this.state.promoDiscount);
-    this.setState({ promoPrice: discountPrice });  
-    this.calculateEstimatedTotal();   
+    let discountPrice = this.state.priceTotal * this.state.promoDiscount;
+    this.setState({ promoPrice: discountPrice });
+    this.calculateEstimatedTotal();
   };
 
+  updateQuantity = styleNumber => e => {
+    console.log("inside updateQuantity", ...this.state.chosenItems);
+    let chosenItems = [{...this.state.chosenItems}]
+    
+      this.state.chosenItems.map(item => {
+         
+        item.styleNumber === styleNumber ?  chosenItems.push( {...item, quantOrdered : e.target.value}) : chosenItems.push( {...item})
+        })
+      // chosenItems.styleNumber === styleNumber ?  console.log("true") : console.log(styleNumber, chosenItems);
+      ;
+      chosenItems.shift(); 
+      this.setState({ chosenItems: chosenItems});
+
+      console.log(this.state.chosenItems);
+      
+    // this.updatePrice(e.target.value);
+  }
 
   renderList = items => {
     return items.map(item => {
@@ -99,8 +108,10 @@ console.log("total amount", totalAmount);
             size={item.size}
             price={item.price}
             render={item.render}
+            quantity={item.quantOrdered}
             colorOptions={item.colorOptions}
             updateTotal={this.updateTotal}
+            updateQuantity={this.updateQuantity}
           />
         )
       );
@@ -108,7 +119,7 @@ console.log("total amount", totalAmount);
   };
 
   render() {
-    // console.log("this state in render", this.state);
+    console.log("this state in render", this.state);
 
     return (
       <div>
@@ -138,7 +149,7 @@ console.log("total amount", totalAmount);
             </Grid.Row>
           </Grid>
           <Divider />
-          {this.renderList(this.state.items)} <Divider />
+          {this.renderList(this.state.chosenItems)} <Divider />
           <Grid>
             <Grid.Column floated="left" width={4}>
               <QuestionsLink />

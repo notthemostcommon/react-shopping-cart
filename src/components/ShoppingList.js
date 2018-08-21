@@ -12,7 +12,7 @@ export default class ShoppingList extends Component {
       price: ""
     };
     this.updateShirtSize = this.updateShirtSize.bind(this);
-    this.updateQuantity = this.updateQuantity.bind(this);
+    // this.updateQuantity = this.updateQuantity.bind(this);
     this.updatePrice = this.updatePrice.bind(this); 
   }
 
@@ -29,25 +29,25 @@ export default class ShoppingList extends Component {
     this.setState({ shirtSize: value });
   };
 
-  updateQuantity = e => {
-      console.log("inside updateQuantity");
+//   updateQuantity = e => {
+//       console.log("inside updateQuantity");
       
-    this.setState({ quantity: e.target.value });
-    this.updatePrice(e.target.value);
-    console.log(this.state.quantity);
+//     this.setState({ quantity: e.target.value });
+//     this.updatePrice(e.target.value);
+//     console.log(this.props.quantity);
     
-  };
+//   };
 
   updatePrice = (quant) => {
       console.log("inside updatePrice");
       
     const price = (this.state.price * quant).toFixed(2);
-    this.props.updateTotal(price); 
     this.setState({ price: price });
+
   };
 
   render() {
-    console.log("shoppinglist state", this.state);
+    // console.log("shoppinglist state", this.state);
     const editButtonStyle = {display: "flex", flexDirection: "row"}; 
     const price = (this.props.price.toFixed(2));
 
@@ -72,8 +72,8 @@ export default class ShoppingList extends Component {
                 price={price}
                 shirtSize={this.state.shirtSize}
                 updateShirtSize={this.updateShirtSize}
-                quantity={this.state.quantity}
-                updateQuantity={this.updateQuantity}
+                quantity={this.props.quantity}
+                updateQuantity={this.props.updateQuantity}
                 />
               | X REMOVE | SAVE FOR LATER </h5>
                 </Grid.Row>
@@ -84,7 +84,7 @@ export default class ShoppingList extends Component {
             <Grid.Column width={2} textAlign="center">
               <input
                 maxLength="1"
-                value={this.state.quantity}
+                value={this.props.quantity}
                 size="2"
                 align="middle"
               />
