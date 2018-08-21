@@ -14,17 +14,19 @@ export default class Cart extends Component {
       listLength: 0,
       chosenItems: [],
       totalAmount: [],
-      priceTotal: 0,
+      subTotal: 0,
       promoCode: "",
       promoDiscount: 0.1,
       promoPrice: 0,
-      estimatedTotal: 0
+      estimatedTotal: 0, 
+      modalOpen: false, 
     };
 
-    this.updateTotal = this.updateTotal.bind(this);
+    this.updateSubTotal = this.updateSubTotal.bind(this);
     this.getPromoCode = this.getPromoCode.bind(this);
     this.promoDiscount = this.promoDiscount.bind(this);
-    this.updateQuantity = this.updateQuantity.bind(this); 
+    this.updateQuantity = this.updateQuantity.bind(this);
+    this.handleOpen = this.handleOpen.bind(this); 
   }
 
   componentDidMount = () => {
@@ -44,24 +46,22 @@ export default class Cart extends Component {
       listLength: renderedList.length,
       totalAmount: priceTotal
     });
-    this.updateTotal(priceTotal);
   };
 
-  updateTotal = prices => {
-    let totalAmount = [];
-    prices.map(price => {
-      totalAmount.push(price.price * price.quantity);
+  updateSubTotal = (e) => {
+    e.preventDefault(); 
+    let totalAmount = [];    
+    this.state.chosenItems.map(item => {      
+      totalAmount.push(item.price * item.quantOrdered);
     });
     let totalPrice = totalAmount.reduce((total, current) => {
       return total + current;
-    }, 0);
-    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice });
+    }, 0);    
+    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice, modalOpen: false });
   };
 
   calculateEstimatedTotal = () => {
-    console.log("estimatedTotal", this.state);
-
-    let total = this.state.priceTotal - this.state.promoPrice;
+    let total = this.state.subTotal - this.state.promoPrice;
     this.setState({ estimatedTotal: total });
   };
 
@@ -71,28 +71,30 @@ export default class Cart extends Component {
   };
 
   promoDiscount = () => {
-    let discountPrice = this.state.priceTotal * this.state.promoDiscount;
+    let discountPrice = this.state.subTotal * this.state.promoDiscount;
     this.setState({ promoPrice: discountPrice });
     this.calculateEstimatedTotal();
   };
 
   updateQuantity = styleNumber => e => {
-    console.log("inside updateQuantity", ...this.state.chosenItems);
-    let chosenItems = [{...this.state.chosenItems}]
-    
-      this.state.chosenItems.map(item => {
-         
-        item.styleNumber === styleNumber ?  chosenItems.push( {...item, quantOrdered : e.target.value}) : chosenItems.push( {...item})
-        })
-      // chosenItems.styleNumber === styleNumber ?  console.log("true") : console.log(styleNumber, chosenItems);
-      ;
-      chosenItems.shift(); 
-      this.setState({ chosenItems: chosenItems});
+    // copy state of chosenItems and then map through it to find the item being updated, 
+    // update the item, push updated and non updated items back into array and 
+    let chosenItems = [{ ...this.state.chosenItems }];
+    this.state.chosenItems.map(item => {
+      item.styleNumber === styleNumber
+        ? chosenItems.push({ ...item, quantOrdered: e.target.value })
+        : chosenItems.push({ ...item });
+    });
+    // remove original state from array 
+    chosenItems.shift();
 
-      console.log(this.state.chosenItems);
-      
-    // this.updatePrice(e.target.value);
-  }
+    // set state of chosenItems with new array 
+    this.setState({ chosenItems: chosenItems });
+
+    // this.updateSubTotal();
+  };
+
+  handleOpen = () => this.setState({ modalOpen: true })
 
   renderList = items => {
     return items.map(item => {
@@ -110,8 +112,11 @@ export default class Cart extends Component {
             render={item.render}
             quantity={item.quantOrdered}
             colorOptions={item.colorOptions}
-            updateTotal={this.updateTotal}
+            updateTotal={this.updateSubTotal}
             updateQuantity={this.updateQuantity}
+            modalOpen={this.state.modalOpen}
+            handleClose={this.handleClose}
+            handleOpen={this.handleOpen}
           />
         )
       );
@@ -119,7 +124,7 @@ export default class Cart extends Component {
   };
 
   render() {
-    console.log("this state in render", this.state);
+    // console.log("this state in render", this.state);
 
     return (
       <div>
@@ -155,9 +160,9 @@ export default class Cart extends Component {
               <QuestionsLink />
             </Grid.Column>
             <Grid.Column floated="right" width={12}>
-              {this.state.priceTotal && (
+              {this.state.subTotal && (
                 <CheckoutTotal
-                  priceTotal={this.state.priceTotal}
+                  priceTotal={this.state.subTotal}
                   getPromoCode={this.getPromoCode}
                   promoCode={this.state.promoCode}
                   promoPrice={this.state.promoPrice}

@@ -8,9 +8,12 @@ export default class ShoppingList extends Component {
 
     this.state = {
       shirtSize: "",
-      price: ""
+      price: "", 
+      active: false, 
     };
     this.updateShirtSize = this.updateShirtSize.bind(this);
+    this.handleOpen = this.handleOpen.bind(this); 
+    this.multiFunction = this.multiFunction.bind(this); 
   }
 
   componentDidMount = () => {
@@ -22,21 +25,32 @@ export default class ShoppingList extends Component {
     const price = (this.props.price * parseInt(this.props.quantity)).toFixed(2);
     console.log((price));
 
-    this.setState({ shirtSize: shirtSize, price: price });
+    this.setState({ shirtSize: shirtSize, price: price, active: false });
   };
+
+  handleOpen = () => {
+      console.log("active state", this.state.active);
+      
+      this.setState({ active: !this.state.active })
+  }; 
 
   updateShirtSize = (e, { value }) => {
     this.setState({ shirtSize: value });
   };
 
   componentDidUpdate(prevProps) {
-    // if quantity of item changes, update the displayed price 
-    console.log("CDU", prevProps, this.props.quantity);
-    
+    // if quantity of item changes, update the displayed price     
     if ( this.props.quantity !== prevProps.quantity) {
         const updatedPrice = (this.props.price * this.props.quantity).toFixed(2);
         this.setState({ price: updatedPrice });    }
     };
+
+    multiFunction = (e) => {
+        console.log("inside multifunction", this.state.active);
+        
+        this.handleOpen(); 
+        this.props.updateTotal(e); 
+    }
 
   render() {
     // console.log("shoppinglist state", this.props);
@@ -63,8 +77,9 @@ export default class ShoppingList extends Component {
                     updateShirtSize={this.updateShirtSize}
                     updateQuantity={this.props.updateQuantity}
                     updateTotal={this.props.updateTotal}
-                    modalOpen={this.props.modalOpen}
-                    handleOpen={this.props.handleOpen}
+                    modalOpen={this.state.active}
+                    handleOpen={this.handleOpen}
+                    multiFunction={this.multiFunction}
                   />
                   | X REMOVE | SAVE FOR LATER{" "}
                 </h5>
