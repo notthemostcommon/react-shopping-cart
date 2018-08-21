@@ -8,19 +8,19 @@ export default class ShoppingList extends Component {
 
     this.state = {
       shirtSize: "",
-      quantity: 1,
       price: ""
     };
     this.updateShirtSize = this.updateShirtSize.bind(this);
-    // this.updateQuantity = this.updateQuantity.bind(this);
-    this.updatePrice = this.updatePrice.bind(this); 
   }
 
   componentDidMount = () => {
+      
+      // randomly assign size value 
     const shirtSize = this.props.size[
       Math.floor(Math.random() * this.props.size.length)
     ];
-    const price = (this.props.price * parseInt(this.state.quantity)).toFixed(2);
+    const price = (this.props.price * parseInt(this.props.quantity)).toFixed(2);
+    console.log((price));
 
     this.setState({ shirtSize: shirtSize, price: price });
   };
@@ -29,29 +29,20 @@ export default class ShoppingList extends Component {
     this.setState({ shirtSize: value });
   };
 
-//   updateQuantity = e => {
-//       console.log("inside updateQuantity");
-      
-//     this.setState({ quantity: e.target.value });
-//     this.updatePrice(e.target.value);
-//     console.log(this.props.quantity);
+  componentDidUpdate(prevProps) {
+    // if quantity of item changes, update the displayed price 
+    console.log("CDU", prevProps, this.props.quantity);
     
-//   };
-
-  updatePrice = (quant) => {
-      console.log("inside updatePrice");
-      
-    const price = (this.state.price * quant).toFixed(2);
-    this.setState({ price: price });
-
-  };
+    if ( this.props.quantity !== prevProps.quantity) {
+        const updatedPrice = (this.props.price * this.props.quantity).toFixed(2);
+        this.setState({ price: updatedPrice });    }
+    };
 
   render() {
-    // console.log("shoppinglist state", this.state);
-    const editButtonStyle = {display: "flex", flexDirection: "row"}; 
-    const price = (this.props.price.toFixed(2));
-
+    // console.log("shoppinglist state", this.props);
+    const editButtonStyle = { display: "flex", flexDirection: "row" };
     const upperName = `${this.props.name}`.toUpperCase();
+
     return (
       <div>
         <Grid divided="vertically">
@@ -65,18 +56,19 @@ export default class ShoppingList extends Component {
               <p>Color: {this.props.color}</p>
               <br />
               <Grid.Row>
-
-              <h5 style={editButtonStyle}>
-              <EditItem
-                item={this.props}
-                price={price}
-                shirtSize={this.state.shirtSize}
-                updateShirtSize={this.updateShirtSize}
-                quantity={this.props.quantity}
-                updateQuantity={this.props.updateQuantity}
-                />
-              | X REMOVE | SAVE FOR LATER </h5>
-                </Grid.Row>
+                <h5 style={editButtonStyle}>
+                  <EditItem
+                    item={this.props}
+                    shirtSize={this.state.shirtSize}
+                    updateShirtSize={this.updateShirtSize}
+                    updateQuantity={this.props.updateQuantity}
+                    updateTotal={this.props.updateTotal}
+                    modalOpen={this.props.modalOpen}
+                    handleOpen={this.props.handleOpen}
+                  />
+                  | X REMOVE | SAVE FOR LATER{" "}
+                </h5>
+              </Grid.Row>
             </Grid.Column>
             <Grid.Column width={2} textAlign="center">
               <h3>{this.state.shirtSize}</h3>
@@ -91,6 +83,7 @@ export default class ShoppingList extends Component {
             </Grid.Column>
 
             <Grid.Column width={3} textAlign="right">
+            
               <h2>${this.state.price}</h2>
             </Grid.Column>
           </Grid.Row>
