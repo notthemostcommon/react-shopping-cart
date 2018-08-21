@@ -5,7 +5,6 @@ import { Grid, Divider, Container } from "semantic-ui-react";
 import CheckoutTotal from "../components/CheckoutTotal";
 import QuestionsLink from "../components/QuestionsLink";
 
-
 export default class Cart extends Component {
   constructor(props) {
     super(props);
@@ -14,48 +13,77 @@ export default class Cart extends Component {
       items: inventory,
       listLength: 0,
       chosenItems: [],
-      totalAmount: [], 
-      priceTotal: 0, 
-       
+      totalAmount: [],
+      priceTotal: 0,
+      promoCode: "",
+      promoDiscount: 0.1,
+      promoPrice: 0, 
+      estimatedTotal: 0, 
     };
 
     this.updateTotal = this.updateTotal.bind(this);
+    this.getPromoCode = this.getPromoCode.bind(this);
+    this.promoDiscount = this.promoDiscount.bind(this); 
   }
 
   componentDidMount = () => {
     let renderedList = [];
-    let priceTotal = []; 
-    console.log("priceTotal", priceTotal);
-    
+    let priceTotal = [];
+
     this.state.items.map(item => {
-      item.render && renderedList.push(item), 
-      item.render && priceTotal.push(item.price); 
+      item.quantOrdered > 0 && renderedList.push(item); 
+      // item.render && renderedList.push(item),
+        item.quantOrdered > 0 && priceTotal.push({
+          price: item.price, 
+          quantity: item.quantOrdered,})
     });
     this.setState({
       chosenItems: renderedList,
-      listLength: renderedList.length, 
+      listLength: renderedList.length,
       totalAmount: priceTotal, 
     });
-    this.updateTotal(priceTotal)
-  }
-                 
-  updateTotal = (price) => {
-    let totalAmount = []; 
-    console.log(this.state.chosenItems);
+    this.updateTotal(priceTotal);
+  };
+
+  updateTotal = prices => {
+    let totalAmount = [];
+prices.map (price => {
+  totalAmount.push(price.price * price.quantity);  
+})
+console.log("total amount", totalAmount);
+
+
     
     // let { totalAmount } = this.state;
     // this.setState({totalAmount: [...totalAmount,price ]})
     // this.state.chosenItems.map(item => {
     //   return totalAmount.push(item.price)
-      
+
     // });
-    let totalPrice = price.reduce( (total, current) => {
-      return total + current
-    }, 0)
-    this.setState({priceTotal: totalPrice})
-    console.log("totalAmount, totalPrice", totalPrice);
-    
+    let totalPrice = totalAmount.reduce((total, current) => {
+      return total + current;
+    }, 0);
+    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice });    
   };
+  
+  calculateEstimatedTotal = () => {
+    console.log("estimatedTotal", this.state);
+    
+    let total = (this.state.priceTotal - this.state.promoPrice);     
+    this.setState({estimatedTotal: total})
+  }
+  
+  getPromoCode = e => {    
+    this.setState({ promoCode: e.target.value });
+    this.promoDiscount(); 
+  };
+
+  promoDiscount = () => {
+    let discountPrice = (this.state.priceTotal * this.state.promoDiscount);
+    this.setState({ promoPrice: discountPrice });  
+    this.calculateEstimatedTotal();   
+  };
+
 
   renderList = items => {
     return items.map(item => {
@@ -80,7 +108,6 @@ export default class Cart extends Component {
   };
 
   render() {
-    
     // console.log("this state in render", this.state);
 
     return (
@@ -91,7 +118,6 @@ export default class Cart extends Component {
             If the cart if completely empty then we shall again add back the
             products for you
           </p>
-
           <Grid divided="vertically">
             <Grid.Row>
               <Grid.Column width={3}>
@@ -112,15 +138,22 @@ export default class Cart extends Component {
             </Grid.Row>
           </Grid>
           <Divider />
-          
-          {this.renderList(this.state.items)}
-]          <Divider />
+          {this.renderList(this.state.items)} <Divider />
           <Grid>
             <Grid.Column floated="left" width={4}>
               <QuestionsLink />
             </Grid.Column>
             <Grid.Column floated="right" width={12}>
-              {this.state.priceTotal && <CheckoutTotal priceTotal={this.state.priceTotal}/>}
+              {this.state.priceTotal && (
+                <CheckoutTotal
+                  priceTotal={this.state.priceTotal}
+                  getPromoCode={this.getPromoCode}
+                  promoCode={this.state.promoCode}
+                  promoPrice={this.state.promoPrice}
+                  promoDiscount={this.promoDiscount}
+                  estimatedTotal={this.state.estimatedTotal}
+                />
+              )}
             </Grid.Column>
           </Grid>
         </Container>
