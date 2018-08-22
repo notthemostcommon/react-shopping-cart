@@ -11,9 +11,12 @@ export default class CheckoutTotal extends Component {
     }
     
   render() {
-      console.log("checkout", this.props.priceTotal);
-      
-      let formattedPrice = this.props.priceTotal.toFixed(2)
+      console.log("checkout", this.props);
+      let finalPrice = (this.props.estimatedTotal - this.props.promoPrice).toFixed(2)
+      let formattedSubTotal = this.props.subTotal.toFixed(2); 
+      let formattedTotal = this.props.estimatedTotal.toFixed(2)
+      let formattedDiscount = this.props.promoPrice.toFixed(2)
+
     return (
       <div>
         <Grid divided="vertically">
@@ -21,20 +24,25 @@ export default class CheckoutTotal extends Component {
           <h4> ENTER PROMOTIONAL CODE OR GIFT CARD</h4>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
-          <Input action="APPLY" placeholder="CODE OR CARD" />
+          <Input 
+          action="APPLY" 
+          placeholder="CODE OR CARD" 
+          onBlur={this.props.getPromoCode}
+          onSubmit={this.props.promoDiscount} />
           </Grid.Column>
 
           <Grid.Column floated="left" width={8} >
           <h4> SUB TOTAL</h4>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
-          <h3>${formattedPrice}</h3>
+          <h3>${formattedSubTotal}</h3>
           </Grid.Column>
 
           <Grid.Column floated="left" width={8} >
-          <h4> PROMOTION CODE {this.state.promoCode} APPLIED</h4>
+          <h4> PROMOTION CODE {this.props.promoCode.toUpperCase()} APPLIED</h4>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
+          {this.props.promoPrice != 0 ?  <h3>${formattedDiscount}</h3> : ""}
           </Grid.Column>
 
           <Grid.Column floated="left" width={8} >
@@ -42,6 +50,7 @@ export default class CheckoutTotal extends Component {
           <p>You qualify for free shipping because your order is over $50</p>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
+          <p>FREE</p>
           </Grid.Column>
 
           <Grid.Column floated="left" width={8} >
@@ -49,6 +58,7 @@ export default class CheckoutTotal extends Component {
           <p>Tax will be applied during checkout</p>
           </Grid.Column>
           <Grid.Column floated="right" width={8} textAlign="right">
+          <h2>{finalPrice}</h2>
           </Grid.Column>
           
           <Grid.Column  width={10} >

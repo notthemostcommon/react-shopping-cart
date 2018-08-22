@@ -31,6 +31,7 @@ export default class Cart extends Component {
   componentDidMount = () => {
     let renderedList = [];
     let priceTotal = [];
+    let totalAmount = []; 
 
     this.state.items.map(item => {
       item.quantOrdered > 0 && renderedList.push(item);
@@ -40,15 +41,24 @@ export default class Cart extends Component {
           quantity: item.quantOrdered
         });
     });
+    renderedList.map(item => {      
+      totalAmount.push(item.price * item.quantOrdered);
+    });
+    let totalPrice = totalAmount.reduce((total, current) => {
+      return total + current;
+    }, 0);    
+
     this.setState({
       chosenItems: renderedList,
       listLength: renderedList.length,
-      totalAmount: priceTotal
+      subTotal: totalPrice, 
+      estimatedTotal: totalPrice,
+      // totalAmount: priceTotal
     });
+    // this.calculateSubTotal(); 
   };
 
-  updateSubTotal = (e) => {
-    e.preventDefault(); 
+  calculateSubTotal = () => {
     let totalAmount = [];    
     this.state.chosenItems.map(item => {      
       totalAmount.push(item.price * item.quantOrdered);
@@ -56,7 +66,12 @@ export default class Cart extends Component {
     let totalPrice = totalAmount.reduce((total, current) => {
       return total + current;
     }, 0);    
-    this.setState({ priceTotal: totalPrice, estimatedTotal: totalPrice, modalOpen: false });
+    this.setState({ subTotal: totalPrice, estimatedTotal: totalPrice });
+  }
+
+  updateSubTotal = (e) => {
+    e.preventDefault(); 
+    this.calculateSubTotal(); 
   };
 
   calculateEstimatedTotal = () => {
@@ -158,16 +173,17 @@ export default class Cart extends Component {
               <QuestionsLink />
             </Grid.Column>
             <Grid.Column floated="right" width={12}>
-              {this.state.subTotal && (
+             {/* {this.state.subTotal && */}
                 <CheckoutTotal
-                  priceTotal={this.state.subTotal}
-                  getPromoCode={this.getPromoCode}
-                  promoCode={this.state.promoCode}
-                  promoPrice={this.state.promoPrice}
-                  promoDiscount={this.promoDiscount}
-                  estimatedTotal={this.state.estimatedTotal}
+                subTotal={this.state.subTotal}
+                getPromoCode={this.getPromoCode}
+                promoCode={this.state.promoCode}
+                promoPrice={this.state.promoPrice}
+                promoDiscount={this.promoDiscount}
+                estimatedTotal={this.state.estimatedTotal}
                 />
-              )}
+              {/* } */}
+              
             </Grid.Column>
           </Grid>
         </Container>
