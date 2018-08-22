@@ -53,12 +53,11 @@ export default class Cart extends Component {
       listLength: renderedList.length,
       subTotal: totalPrice, 
       estimatedTotal: totalPrice,
-      // totalAmount: priceTotal
     });
-    // this.calculateSubTotal(); 
   };
 
   calculateSubTotal = () => {
+    
     let totalAmount = [];    
     this.state.chosenItems.map(item => {      
       totalAmount.push(item.price * item.quantOrdered);
@@ -94,13 +93,26 @@ export default class Cart extends Component {
     let chosenItems = [ ...this.state.chosenItems ];
       const index = chosenItems.map(item => item.styleNumber).indexOf(styleNumber);
       chosenItems.splice(index, 1);
-    
+      
+      let totalAmount = [];    
+      chosenItems.map(item => {      
+        totalAmount.push(item.price * item.quantOrdered);
+      });
+      console.log(chosenItems, index, totalAmount);
+      
+      let totalPrice = totalAmount.reduce((total, current) => {
+        return total + current;
+      }, 0);    
+      this.setState({ chosenItems: chosenItems, subTotal: totalPrice, estimatedTotal: totalPrice });
     // set state of chosenItems with new array 
-    this.setState({ chosenItems: chosenItems });
+    // this.setState({ chosenItems: chosenItems });
 
+    // this.calculateSubTotal(); 
   };
 
   updateQuantity = styleNumber => e => {
+    console.log("inside updateQuantity");
+    
     // copy state of chosenItems and then map through it to find the item being updated, 
     // update the item, push updated and non updated items back into array and 
     let chosenItems = [{ ...this.state.chosenItems }];
@@ -109,6 +121,9 @@ export default class Cart extends Component {
         ? chosenItems.push({ ...item, quantOrdered: e.target.value })
         : chosenItems.push({ ...item });
     });
+    chosenItems.shift(); 
+    this.setState({chosenItems: chosenItems})
+    
   }; 
 
   renderList = items => {
@@ -137,7 +152,7 @@ export default class Cart extends Component {
   };
 
   render() {
-    // console.log("this state in render", this.state);
+    console.log("this state in render", this.state);
 
     return (
       <div>

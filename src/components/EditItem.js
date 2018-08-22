@@ -2,7 +2,8 @@ import React from "react";
 import { Modal, Button, Image, Grid, Dropdown, Form } from "semantic-ui-react";
 
 const EditItem = props => {
-    // console.log("editItem props", props.item);
+    
+    console.log("editItem props", props.item);
   const sizingStyle = { display: "inline-block" };
   const inputStyle = { height: "40px", textAlign: "center" };
   const options = [
@@ -15,7 +16,6 @@ const EditItem = props => {
     <Modal 
     trigger={<h5 onClick={props.handleOpen}> EDIT </h5>} 
     open={props.modalOpen}
-    // onClose={props.updateTotal}
     >
       <Grid>
         <Grid.Row>
@@ -26,16 +26,18 @@ const EditItem = props => {
             <h4>{props.item.styleNumber}</h4>
             {props.item.colorOptions.map((color, i) => {
               const swatchStyle = {
-                background: `${color}`,
+                background: `${color.hue}`,
                 borderColor: "black",
-                borderWidth: "5px",
+                borderWidth: "2px",
+                borderStyle: "solid", 
                 width: "35px",
                 height: "25px",
-                display: "inline-block"
+                display: "inline-block", 
+                margin: "5px", 
               };
-              return <div style={swatchStyle} key={i} />;
+              return <div onClick={() => props.updateColor(color)} style={swatchStyle} key={i} />;
             })}
-            <h4>Color: {props.item.color}</h4>
+            <h4>Color: {props.shirtColor}</h4>
 
             <div style={sizingStyle}>
               <Dropdown
@@ -47,23 +49,23 @@ const EditItem = props => {
               />
               <Form onSubmit={props.multiFunction}>
                 <input // quanity update input field
-                  maxLength="1"
+                  maxLength="2"
                   defaultValue={props.item.quantity}
                   size="2"
                   align="middle"
                   style={inputStyle}
                   onBlur={props.updateQuantity( props.item.styleNumber)}
+                  onFocus={(e) => e.target.select()}
                 />
                 <br />
                 <Button type="submit">EDIT</Button>
               </Form>
             </div>
 
-            {/* <Button primary>EDIT</Button>
-            <p><a href="#">Check product details</a></p> */}
+            
           </Grid.Column>
           <Grid.Column width={8}>
-            <Image src={props.item.image} size="medium" />
+            <Image src={props.shirtImage} size="medium" />
           </Grid.Column>
         </Grid.Row>
       </Grid>

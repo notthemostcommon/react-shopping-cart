@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Grid, Image, Divider } from "semantic-ui-react";
+import { Grid, Image, Divider , DropdownDivider} from "semantic-ui-react";
 import EditItem from "./EditItem";
 
 export default class ShoppingList extends Component {
@@ -9,11 +9,14 @@ export default class ShoppingList extends Component {
     this.state = {
       shirtSize: "",
       price: "",
-      active: false
+      active: false, 
+      shirtColor: this.props.color, 
+      shirtImage: this.props.image, 
     };
     this.updateShirtSize = this.updateShirtSize.bind(this);
     this.handleOpen = this.handleOpen.bind(this);
     this.multiFunction = this.multiFunction.bind(this);
+    this.updateQuantity = this.updateColor.bind(this); 
   }
 
   componentDidMount = () => {
@@ -24,6 +27,12 @@ export default class ShoppingList extends Component {
     const price = (this.props.price * parseInt(this.props.quantity)).toFixed(2);
     this.setState({ shirtSize: shirtSize, price: price, active: false });
   };
+
+  updateColor = (color) => {
+      console.log("click", color);
+      
+    this.setState({shirtColor: color.hue, shirtImage: color.src})
+  }
 
   handleOpen = () => {
     this.setState({ active: !this.state.active });
@@ -42,16 +51,21 @@ export default class ShoppingList extends Component {
   }
 
   multiFunction = e => {
-      // onSubmit triggers an update to modal state in ShopingList and updateQuanity in Cart
-      // passing modal open/close props from parents forced wrong data into modal
-      // moving modal open/close props to direct parent solved it
+    // onSubmit triggers an update to modal state in ShopingList and updateQuanity in Cart
+    // passing modal open/close props from parents forced wrong data into modal
+    // moving modal open/close props to direct parent solved it
     this.handleOpen();
     this.props.updateTotal(e);
   };
 
   render() {
-    // console.log("shoppinglist state", this.props);
-    const editButtonStyle = { display: "flex", flexDirection: "row" };
+        // console.log("shoppinglist state", this.props);
+    const editButtonStyle = { 
+        display: "flex", 
+        flexDirection: "row", 
+        flex: 1, 
+        alignItems: "baseline"
+    };
     const upperName = `${this.props.name}`.toUpperCase();
 
     return (
@@ -66,11 +80,13 @@ export default class ShoppingList extends Component {
               <p>Style #: {this.props.styleNumber}</p>
               <p>Color: {this.props.color}</p>
               <br />
-              <Grid.Row>
-                  <div style={editButtonStyle}>
-                 
-                  <EditItem
+              <div style={editButtonStyle}>
+              {/* <Grid.Row > */}
+                  <div>
+                      <EditItem
                     item={this.props}
+                    shirtImage={this.state.shirtImage}
+                    shirtColor={this.state.shirtColor}
                     shirtSize={this.state.shirtSize}
                     updateShirtSize={this.updateShirtSize}
                     updateQuantity={this.props.updateQuantity}
@@ -78,11 +94,19 @@ export default class ShoppingList extends Component {
                     modalOpen={this.state.active}
                     handleOpen={this.handleOpen}
                     multiFunction={this.multiFunction}
+                    updateColor={this.updateColor}
                     />
-      <h5 onClick={() => this.props.removeItem(this.props.styleNumber)}>| X REMOVE</h5> <h5>| SAVE FOR LATER</h5>{" "}
                     </div>
-                
-              </Grid.Row>
+                  <h5
+                    onClick={() =>
+                        this.props.removeItem(this.props.styleNumber)
+                    }
+                    >
+                    | X REMOVE
+                  </h5>
+                  <h5>| SAVE FOR LATER</h5>{" "}
+              {/* </Grid.Row> */}
+                    </div>
             </Grid.Column>
             <Grid.Column width={2} textAlign="center">
               <h3>{this.state.shirtSize}</h3>

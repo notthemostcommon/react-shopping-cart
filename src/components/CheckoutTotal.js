@@ -11,7 +11,7 @@ export default class CheckoutTotal extends Component {
     }
     
   render() {
-      console.log("checkout", this.props);
+    //   console.log("checkout", this.props);
       let finalPrice = (this.props.estimatedTotal - this.props.promoPrice).toFixed(2)
       let formattedSubTotal = this.props.subTotal.toFixed(2); 
       let formattedTotal = this.props.estimatedTotal.toFixed(2)
