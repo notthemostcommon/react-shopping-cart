@@ -2,7 +2,7 @@ import React from "react";
 import { Modal, Button, Image, Grid, Dropdown, Form } from "semantic-ui-react";
 
 const EditItem = props => {
-    console.log("editItem props", props.item);
+    // console.log("editItem props", props.item);
   const sizingStyle = { display: "inline-block" };
   const inputStyle = { height: "40px", textAlign: "center" };
   const options = [

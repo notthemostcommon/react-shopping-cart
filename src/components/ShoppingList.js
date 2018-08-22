@@ -8,49 +8,46 @@ export default class ShoppingList extends Component {
 
     this.state = {
       shirtSize: "",
-      price: "", 
-      active: false, 
+      price: "",
+      active: false
     };
     this.updateShirtSize = this.updateShirtSize.bind(this);
-    this.handleOpen = this.handleOpen.bind(this); 
-    this.multiFunction = this.multiFunction.bind(this); 
+    this.handleOpen = this.handleOpen.bind(this);
+    this.multiFunction = this.multiFunction.bind(this);
   }
 
   componentDidMount = () => {
-      
-      // randomly assign size value 
+    // randomly assign size value
     const shirtSize = this.props.size[
       Math.floor(Math.random() * this.props.size.length)
     ];
     const price = (this.props.price * parseInt(this.props.quantity)).toFixed(2);
-    console.log((price));
-
     this.setState({ shirtSize: shirtSize, price: price, active: false });
   };
 
   handleOpen = () => {
-      console.log("active state", this.state.active);
-      
-      this.setState({ active: !this.state.active })
-  }; 
+    this.setState({ active: !this.state.active });
+  };
 
   updateShirtSize = (e, { value }) => {
     this.setState({ shirtSize: value });
   };
 
   componentDidUpdate(prevProps) {
-    // if quantity of item changes, update the displayed price     
-    if ( this.props.quantity !== prevProps.quantity) {
-        const updatedPrice = (this.props.price * this.props.quantity).toFixed(2);
-        this.setState({ price: updatedPrice });    }
-    };
-
-    multiFunction = (e) => {
-        console.log("inside multifunction", this.state.active);
-        
-        this.handleOpen(); 
-        this.props.updateTotal(e); 
+    // if quantity of item changes, update the displayed price
+    if (this.props.quantity !== prevProps.quantity) {
+      const updatedPrice = (this.props.price * this.props.quantity).toFixed(2);
+      this.setState({ price: updatedPrice });
     }
+  }
+
+  multiFunction = e => {
+      // onSubmit triggers an update to modal state in ShopingList and updateQuanity in Cart
+      // passing modal open/close props from parents forced wrong data into modal
+      // moving modal open/close props to direct parent solved it
+    this.handleOpen();
+    this.props.updateTotal(e);
+  };
 
   render() {
     // console.log("shoppinglist state", this.props);
@@ -70,7 +67,8 @@ export default class ShoppingList extends Component {
               <p>Color: {this.props.color}</p>
               <br />
               <Grid.Row>
-                <h5 style={editButtonStyle}>
+                  <div style={editButtonStyle}>
+                 
                   <EditItem
                     item={this.props}
                     shirtSize={this.state.shirtSize}
@@ -80,9 +78,10 @@ export default class ShoppingList extends Component {
                     modalOpen={this.state.active}
                     handleOpen={this.handleOpen}
                     multiFunction={this.multiFunction}
-                  />
-                  | X REMOVE | SAVE FOR LATER{" "}
-                </h5>
+                    />
+      <h5 onClick={() => this.props.removeItem(this.props.styleNumber)}>| X REMOVE</h5> <h5>| SAVE FOR LATER</h5>{" "}
+                    </div>
+                
               </Grid.Row>
             </Grid.Column>
             <Grid.Column width={2} textAlign="center">
@@ -98,7 +97,6 @@ export default class ShoppingList extends Component {
             </Grid.Column>
 
             <Grid.Column width={3} textAlign="right">
-            
               <h2>${this.state.price}</h2>
             </Grid.Column>
           </Grid.Row>

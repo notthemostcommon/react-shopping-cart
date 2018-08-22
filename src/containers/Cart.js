@@ -19,14 +19,13 @@ export default class Cart extends Component {
       promoDiscount: 0.1,
       promoPrice: 0,
       estimatedTotal: 0, 
-      modalOpen: false, 
     };
 
     this.updateSubTotal = this.updateSubTotal.bind(this);
     this.getPromoCode = this.getPromoCode.bind(this);
     this.promoDiscount = this.promoDiscount.bind(this);
     this.updateQuantity = this.updateQuantity.bind(this);
-    this.handleOpen = this.handleOpen.bind(this); 
+    this.removeItem = this.removeItem.bind(this); 
   }
 
   componentDidMount = () => {
@@ -76,6 +75,16 @@ export default class Cart extends Component {
     this.calculateEstimatedTotal();
   };
 
+  removeItem = styleNumber => {    
+    let chosenItems = [ ...this.state.chosenItems ];
+      const index = chosenItems.map(item => item.styleNumber).indexOf(styleNumber);
+      chosenItems.splice(index, 1);
+    
+    // set state of chosenItems with new array 
+    this.setState({ chosenItems: chosenItems });
+
+  };
+
   updateQuantity = styleNumber => e => {
     // copy state of chosenItems and then map through it to find the item being updated, 
     // update the item, push updated and non updated items back into array and 
@@ -85,16 +94,7 @@ export default class Cart extends Component {
         ? chosenItems.push({ ...item, quantOrdered: e.target.value })
         : chosenItems.push({ ...item });
     });
-    // remove original state from array 
-    chosenItems.shift();
-
-    // set state of chosenItems with new array 
-    this.setState({ chosenItems: chosenItems });
-
-    // this.updateSubTotal();
-  };
-
-  handleOpen = () => this.setState({ modalOpen: true })
+  }; 
 
   renderList = items => {
     return items.map(item => {
@@ -114,9 +114,7 @@ export default class Cart extends Component {
             colorOptions={item.colorOptions}
             updateTotal={this.updateSubTotal}
             updateQuantity={this.updateQuantity}
-            modalOpen={this.state.modalOpen}
-            handleClose={this.handleClose}
-            handleOpen={this.handleOpen}
+            removeItem={this.removeItem}
           />
         )
       );
