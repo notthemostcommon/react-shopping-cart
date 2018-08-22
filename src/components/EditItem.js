@@ -1,21 +1,21 @@
-import React from "react";
-import { Modal, Button, Image, Grid, Dropdown, Form } from "semantic-ui-react";
+import React from 'react';
+import { Modal, Button, Image, Grid, Dropdown, Form } from 'semantic-ui-react';
 
 const EditItem = props => {
-    
-    console.log("editItem props", props.item);
-  const sizingStyle = { display: "inline-block" };
-  const inputStyle = { height: "40px", textAlign: "center" };
+  const sizingStyle = { display: 'inline-block' };
+  const inputStyle = { height: '40px', textAlign: 'center' };
+  
+  // options for size dropdown menu 
   const options = [
-    { key: 1, text: "Small", value: "Small" },
-    { key: 2, text: "Medium", value: "Medium" },
-    { key: 3, text: "Large", value: "Large" },
-    { key: 4, text: "X-Large", value: "X-Large" }
+    { key: 1, text: 'Small', value: 'Small' },
+    { key: 2, text: 'Medium', value: 'Medium' },
+    { key: 3, text: 'Large', value: 'Large' },
+    { key: 4, text: 'X-Large', value: 'X-Large' },
   ];
   return (
-    <Modal 
-    trigger={<h5 onClick={props.handleOpen}> EDIT </h5>} 
-    open={props.modalOpen}
+    <Modal
+      trigger={<h5 onClick={props.handleOpen}> EDIT </h5>}
+      open={props.modalOpen}
     >
       <Grid>
         <Grid.Row>
@@ -27,15 +27,21 @@ const EditItem = props => {
             {props.item.colorOptions.map((color, i) => {
               const swatchStyle = {
                 background: `${color.hue}`,
-                borderColor: "black",
-                borderWidth: "2px",
-                borderStyle: "solid", 
-                width: "35px",
-                height: "25px",
-                display: "inline-block", 
-                margin: "5px", 
+                borderColor: 'black',
+                borderWidth: '2px',
+                borderStyle: 'solid',
+                width: '35px',
+                height: '25px',
+                display: 'inline-block',
+                margin: '5px',
               };
-              return <div onClick={() => props.updateColor(color)} style={swatchStyle} key={i} />;
+              return (
+                <div
+                  onClick={() => props.updateColor(color)}
+                  style={swatchStyle}
+                  key={i}
+                />
+              );
             })}
             <h4>Color: {props.shirtColor}</h4>
 
@@ -54,15 +60,14 @@ const EditItem = props => {
                   size="2"
                   align="middle"
                   style={inputStyle}
-                  onBlur={props.updateQuantity( props.item.styleNumber)}
-                  onFocus={(e) => e.target.select()}
+                  type="number"
+                  onBlur={props.updateQuantity(props.item.styleNumber)}
+                  onFocus={e => e.target.select()}
                 />
                 <br />
                 <Button type="submit">EDIT</Button>
               </Form>
             </div>
-
-            
           </Grid.Column>
           <Grid.Column width={8}>
             <Image src={props.shirtImage} size="medium" />

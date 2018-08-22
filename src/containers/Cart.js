@@ -5,7 +5,7 @@ import { Grid, Divider, Container } from "semantic-ui-react";
 import CheckoutTotal from "../components/CheckoutTotal";
 import QuestionsLink from "../components/QuestionsLink";
 
-export default class Cart extends Component {
+class Cart extends Component {
   constructor(props) {
     super(props);
 
@@ -28,11 +28,12 @@ export default class Cart extends Component {
     this.removeItem = this.removeItem.bind(this); 
   }
 
-  componentDidMount = () => {
+  componentDidMount () {
     let renderedList = [];
     let priceTotal = [];
     let totalAmount = []; 
 
+    // identifies preset ordered items quantities to render 
     this.state.items.map(item => {
       item.quantOrdered > 0 && renderedList.push(item);
       item.quantOrdered > 0 &&
@@ -41,6 +42,9 @@ export default class Cart extends Component {
           quantity: item.quantOrdered
         });
     });
+
+    // renders list of items that have quantities > 0
+    // calculates total based on quantities and price 
     renderedList.map(item => {      
       totalAmount.push(item.price * item.quantOrdered);
     });
@@ -56,6 +60,7 @@ export default class Cart extends Component {
     });
   };
 
+  // calculates subtotal based on quantity updates
   calculateSubTotal = () => {
     
     let totalAmount = [];    
@@ -68,27 +73,32 @@ export default class Cart extends Component {
     this.setState({ subTotal: totalPrice, estimatedTotal: totalPrice });
   }
 
+  // prevents default when form is submitted 
   updateSubTotal = (e) => {
     e.preventDefault(); 
     this.calculateSubTotal(); 
   };
 
+  // calculates estimated total including promo discount 
   calculateEstimatedTotal = () => {
     let total = this.state.subTotal - this.state.promoPrice;
     this.setState({ estimatedTotal: total });
   };
 
+  // captures promo code from EditItem input 
   getPromoCode = e => {
     this.setState({ promoCode: e.target.value });
     this.promoDiscount();
   };
 
+  // updates total of discount to be applied from promo code 
   promoDiscount = () => {
     let discountPrice = this.state.subTotal * this.state.promoDiscount;
     this.setState({ promoPrice: discountPrice });
     this.calculateEstimatedTotal();
   };
 
+  // removes item and calculates updated price 
   removeItem = styleNumber => {    
     let chosenItems = [ ...this.state.chosenItems ];
       const index = chosenItems.map(item => item.styleNumber).indexOf(styleNumber);
@@ -98,20 +108,15 @@ export default class Cart extends Component {
       chosenItems.map(item => {      
         totalAmount.push(item.price * item.quantOrdered);
       });
-      console.log(chosenItems, index, totalAmount);
       
       let totalPrice = totalAmount.reduce((total, current) => {
         return total + current;
       }, 0);    
       this.setState({ chosenItems: chosenItems, subTotal: totalPrice, estimatedTotal: totalPrice });
-    // set state of chosenItems with new array 
-    // this.setState({ chosenItems: chosenItems });
-
-    // this.calculateSubTotal(); 
   };
 
+  // updates quantity from EditItem input 
   updateQuantity = styleNumber => e => {
-    console.log("inside updateQuantity");
     
     // copy state of chosenItems and then map through it to find the item being updated, 
     // update the item, push updated and non updated items back into array and 
@@ -126,10 +131,11 @@ export default class Cart extends Component {
     
   }; 
 
+  // renders list of items based on quantities greateer than zero
   renderList = items => {
     return items.map(item => {
       return (
-        item.render && (
+        item.quantOrdered > 0 && (
           <ShoppingList
             key={item.styleNumber}
             image={item.src}
@@ -152,8 +158,6 @@ export default class Cart extends Component {
   };
 
   render() {
-    console.log("this state in render", this.state);
-
     return (
       <div>
         <Container>
@@ -205,4 +209,6 @@ export default class Cart extends Component {
       </div>
     );
   }
-}
+}; 
+
+export default Cart; 
